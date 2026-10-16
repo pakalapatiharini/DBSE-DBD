@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 10px; }
+        h1 { margin-top: 0; }
+        a.button { display: inline-block; padding: 10px 15px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background: #f0f0f0; }
+        a { margin-right: 10px; }
+        .delete { color: #b91c1c; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Student Management System</h1>
+    <a class="button" href="/students/new">+ Add Student</a>
+    <table>
+        <thead>
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Course</th><th>Age</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${students}">
+            <td th:text="${student.id}"></td>
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.email}"></td>
+            <td th:text="${student.course}"></td>
+            <td th:text="${student.age}"></td>
+            <td>
+                <a th:href="@{/students/edit/{id}(id=${student.id})}">Edit</a>
+                <a class="delete" th:href="@{/students/delete/{id}(id=${student.id})}"
+                   onclick="return confirm('Delete this student?')">Delete</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(students)}">
+            <td colspan="6">No students added yet.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

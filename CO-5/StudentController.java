@@ -1,0 +1,66 @@
+package com.example.student_management.controller;
+
+import com.example.student_management.model.Student;
+import com.example.student_management.repository.StudentRepository;
+import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("/students")
+public class StudentController {
+
+    private final StudentRepository studentRepository;
+
+    public StudentController(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
+    @GetMapping
+    public String listStudents(Model model) {
+        model.addAttribute("students", studentRepository.findAll());
+        return "students";
+    }
+
+    @GetMapping("/new")
+    public String showAddForm(Model model) {
+        model.addAttribute("student", new Student());
+        return "student-form";
+    }
+
+    @PostMapping("/save")
+    public String saveStudent(@Valid @ModelAttribute("student") Student student,
+                              BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "student-form";
+        }
+        studentRepository.save(student);
+        return "redirect:/students";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + id));
+        model.addAttribute("student", student);
+        return "student-form";
+    }
+
+    @PostMapping("/update")
+    public String updateStudent(@Valid @ModelAttribute("student") Student student,
+                                BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "student-form";
+        }
+        studentRepository.save(student);
+        return "redirect:/students";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteStudent(@PathVariable Long id) {
+        studentRepository.deleteById(id);
+        return "redirect:/students";
+    }
+}
